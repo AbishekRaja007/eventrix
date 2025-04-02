@@ -1,33 +1,39 @@
 const Category = require("../models/CategoryModel");
 const Product = require("../models/ProductModel");
+const path = require("path");
+const fs = require("fs");
 
 // Controller function to add a new category
 const addCategory = async (req, res) => {
   try {
-    const { category_name } = req.body;
+    const { category_name, description } = req.body;
+    const category_image = req.file ? req.file.filename : null; // Handle image upload
 
-    // Create a new category
+    if (!category_name) {
+      return res.status(400).json({ message: "Category name is required" });
+    }
+
+    // Create new category
     const newCategory = new Category({
       category_name,
+      description,
+      category_image,
     });
 
-    // Save to the database
     await newCategory.save();
 
-    res.status(201).json({
-      message: "Category added successfully",
-      category: newCategory,
-    });
+    res.status(201).json({ message: "Category added successfully", category: newCategory });
   } catch (error) {
-    console.error("Error adding Category:", error);
+    console.error("Error adding category:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
 
+
 // Controller function to fetch all categories
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find(); // Fetch all categories
+    const categories = await Category.find();
     res.status(200).json(categories);
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -62,6 +68,14 @@ const deleteCategory = async (req, res) => {
       return res.status(404).json({ message: "Category not found" });
     }
 
+    // Delete category image from server if exists
+    if (category.category_image) {
+      const imagePath = path.join(__dirname, "../uploads", category.category_image);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+
     // Delete the category from the database
     await Category.findByIdAndDelete(id);
 
@@ -76,21 +90,33 @@ const deleteCategory = async (req, res) => {
 const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { category_name } = req.body;
+    const { category_name, description } = req.body;
+    let category_image = req.file ? req.file.filename : undefined;
 
-    const updatedCategory = await Category.findByIdAndUpdate(
-      id,
-      { category_name },
-      { new: true }
-    );
-
-    if (!updatedCategory) {
+    const category = await Category.findById(id);
+    if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
 
+    // Delete old category image if a new one is uploaded
+    if (category_image && category.category_image) {
+      const oldImagePath = path.join(__dirname, "../uploads", category.category_image);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+    }
+
+    category.category_name = category_name;
+    category.description = description;
+    if (category_image) {
+      category.category_image = category_image;
+    }
+
+    await category.save();
+
     res.status(200).json({
       message: "Category updated successfully",
-      category: updatedCategory,
+      category,
     });
   } catch (error) {
     console.error("Error updating category:", error);
@@ -101,9 +127,7 @@ const updateCategory = async (req, res) => {
 // Controller function to get the total number of categories
 const getCategoryCount = async (req, res) => {
   try {
-    // Count the total number of categories
     const categoryCount = await Category.countDocuments();
-
     res.status(200).json({ categoryCount });
   } catch (error) {
     console.error("Error fetching category count:", error);

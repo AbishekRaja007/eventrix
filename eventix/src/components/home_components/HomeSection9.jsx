@@ -1,52 +1,51 @@
-import { useState, useEffect } from "react";
+import React from "react";
 
-const HomeSection9 = ({ isLoggedIn }) => {
-  if (isLoggedIn) return null;
-
+const Footer = () => {
   return (
-    <section className="bg-[#FAF8F4] py-12 px-6 flex flex-col items-center text-center">
-      <h2 className="text-4xl font-serif text-gray-800">JOIN THE LIST</h2>
-      <p className="italic text-gray-600 mt-2">
-        Sign up to receive my free elopement preparation checklist!
-      </p>
-      <div className="mt-6 flex flex-col md:flex-row gap-4">
-        <input
-          type="email"
-          placeholder="EMAIL ADDRESS"
-          className="border border-gray-400 py-2 px-4 w-80 text-gray-700 focus:outline-none"
-        />
-        <button className="bg-[#F8F6F2] text-gray-800 py-2 px-6 border border-gray-400 hover:bg-gray-200">
-          SIGN UP
-        </button>
-      </div>
-      <div className="flex justify-between w-full max-w-4xl mt-12 text-gray-700">
-        <div className="text-left">
-          <h3 className="text-sm tracking-widest font-bold">NAVIGATE</h3>
-          <ul className="mt-2 space-y-1 text-sm">
-            <li>HOME</li>
-            <li>ABOUT</li>
-            <li>SERVICES</li>
-            <li>GALLERY</li>
-            <li>CONTACT</li>
+    <div className="bg-[#fdfaf5] flex justify-center items-center py-10">
+      <div className="w-full max-w-7xl flex flex-row justify-between px-10">
+        {/* Left Navigation */}
+        <div className="w-1/4">
+          <h3 className="text-gray-500 tracking-wide">NAVIGATE</h3>
+          <ul className="mt-4 space-y-2 text-lg">
+            <li className="font-semibold">HOME</li>
+            <li className="font-semibold">ABOUT</li>
+            <li className="font-semibold">SERVICES</li>
+            <li className="font-semibold">GALLERY</li>
+            <li className="font-semibold">CONTACT</li>
           </ul>
         </div>
-        <div className="text-right">
-          <h3 className="text-sm tracking-widest font-bold">CONNECT</h3>
-          <ul className="mt-2 space-y-1 text-sm">
-            <li>BOOK A SESSION</li>
-            <li>EMAIL HAILEY</li>
-            <li>CLIENT PORTAL</li>
-          </ul>
-          <div className="flex gap-4 mt-4 text-xl">
-            <i className="fab fa-instagram"></i>
-            <i className="fab fa-facebook"></i>
-            <i className="fab fa-tiktok"></i>
-            <i className="fab fa-pinterest"></i>
+
+        {/* Center Content */}
+        <div className="w-1/2 text-center">
+          <h2 className="text-4xl font-bold">JOIN THE LIST</h2>
+          <p className="mt-2 text-lg text-gray-600">
+            Sign up to receive my free elopement preparation checklist!
+          </p>
+          <div className="mt-6 flex justify-center">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="border border-gray-300 px-4 py-3 w-72 rounded-md text-lg"
+            />
+            <button className="bg-gray-100 px-6 py-3 ml-2 text-lg font-semibold rounded-md">
+              SIGN UP
+            </button>
           </div>
         </div>
+
+        {/* Right Connect Section */}
+        <div className="w-1/4 text-right">
+          <h3 className="text-gray-500 tracking-wide">CONNECT</h3>
+          <ul className="mt-4 space-y-2 text-lg">
+            <li className="font-semibold">BOOK A SESSION</li>
+            <li className="font-semibold">EMAIL HAILEY</li>
+            <li className="font-semibold">CLIENT PORTAL</li>
+          </ul>
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 
-export default HomeSection9;
+export default Footer;
