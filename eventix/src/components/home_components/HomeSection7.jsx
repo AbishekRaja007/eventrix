@@ -1,4 +1,5 @@
 import React from "react";
+import img1 from "../../assets/images/hitesh.jpg"
 
 const HomeSection7 = () => {
   return (
@@ -7,7 +8,7 @@ const HomeSection7 = () => {
         {/* Left Image */}
         <div className="md:w-1/2">
           <img
-            src="/assets/images/your-image.jpg" // Replace with actual path
+            src= {img1} // Replace with actual path
             alt="Wedding Couple"
             className="rounded-lg shadow-lg"
           />

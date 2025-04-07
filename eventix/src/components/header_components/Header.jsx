@@ -2,70 +2,59 @@ import React from "react";
 
 const Header = () => {
   return (
-    <div className="flex justify-around items-center p-2">
-      <div>
-        <a className="text-2xl font-bold" href="/home">
-          LOGO
-        </a>
-      </div>
+    <header className="fixed top-[20px] left-0 w-full h-[0px]  bg-transparent font-bold text-black   z-50">
+      <div className="container mx-auto flex justify-between items-center">
+        {/* Logo and Title */}
+        <h1 className="text-5xl font-serif uppercase ">
+          <span className="text-yellow-400">Eventri</span>
+          <span className="text-black">x</span>
+        </h1>
 
-      <div className="flex ">
-        <input
-          type="search"
-          className="border  rounded-5 p-2"
-          placeholder="search"
-        />
-        <ul className="nav justify-content-center">
-          <li className="nav-item">
-            <a
-              className="nav-link text-cyan-700 hover:text-cyan-900 font-semibold hover:underline transition-all 0.5"
-              aria-current="page"
-              href="/contact-us"
-            >
-              Contact
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              className="nav-link text-cyan-700 hover:text-cyan-900 font-semibold hover:underline transition-all 0.5"
-              href="/about-us"
-            >
-              About
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              className="nav-link text-cyan-700 hover:text-cyan-900 font-semibold hover:underline transition-all 0.5"
-              href="/all-blogs"
-            >
-              Blogs
-            </a>
-          </li>
-        </ul>
+        {/* Navbar */}
+        <nav>
+          <ul className="flex gap-6 text-lg">
+            <li>
+              <a className="hover:text-yellow-400 transition" href="#">
+                Home
+              </a>
+            </li>
+            <li>
+              <a className="hover:text-yellow-400 transition" href="/Aboutus">
+                About Us
+              </a>
+            </li>
+            <li>
+              <a className="hover:text-yellow-400 transition" href="/contact-us">
+                Contact Us
+              </a>
+            </li>
+            <li className="relative group">
+              <a
+                className="hover:text-yellow-400 transition cursor-pointer"
+            
+              >
+                Account
+              </a>
+              <ul className="absolute left-0 hidden  w-28 bg-white text-black shadow-lg group-hover:block rounded-[10px]">
+                <li>
+                  <a
+                    className="block px-4 py-2 hover:bg-gray-200 rounded-[10px]"
+                    href="loginpage"
+                  >
+                    Login
+                  </a>
+                </li>
+                <li>
+                  <a className="block px-4 py-2 hover:bg-gray-200 rounded-[10px]" href="#">
+                    Sign Up
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
       </div>
-
-      <div>
-        <ul className="nav justify-content-center">
-          <li className="nav-item">
-            <a
-              className="nav-link text-cyan-700 hover:text-cyan-900 font-semibold hover:underline transition-all 0.5"
-              aria-current="page"
-              href="/login"
-            >
-              login
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              className="nav-link text-cyan-700 hover:text-cyan-900 font-semibold hover:underline transition-all 0.5"
-              href="/register"
-            >
-              Register
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    </header>
   );
 };
 

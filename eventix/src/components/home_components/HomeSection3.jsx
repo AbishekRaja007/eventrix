@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const HomeSection3 = () => {
+  const navigate = useNavigate(); // Hook for navigation
+
   return (
     <div className="bg-white py-20 px-4">
       <div className="max-w-6xl mx-auto">
@@ -28,7 +31,7 @@ const HomeSection3 = () => {
             </p>
           </div>
 
-          {/* Intimate Elopements (Has Left Border for Vertical Line) */}
+          {/* Intimate Elopements */}
           <div className="flex flex-col items-center text-center border-l border-gray-300">
             <img
               src="/path-to-your-image/elopements.jpg"
@@ -41,7 +44,7 @@ const HomeSection3 = () => {
             </p>
           </div>
 
-          {/* For Photographers (Has Left Border for Vertical Line) */}
+          {/* For Photographers */}
           <div className="flex flex-col items-center text-center border-l border-gray-300">
             <img
               src="/path-to-your-image/photographers.jpg"
@@ -57,7 +60,10 @@ const HomeSection3 = () => {
 
         {/* Button */}
         <div className="mt-10 text-center">
-          <button className="px-6 py-3 border border-gray-600 rounded-full text-gray-800 uppercase text-xs tracking-widest hover:bg-gray-700 hover:text-white transition duration-300">
+          <button
+            onClick={() => navigate("/services")} // Navigate to /services page
+            className="px-6 py-3 border border-gray-600 rounded-full text-gray-800 uppercase text-xs tracking-widest hover:bg-gray-700 hover:text-white transition duration-300"
+          >
             Explore Services →
           </button>
         </div>

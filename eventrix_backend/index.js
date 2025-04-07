@@ -8,7 +8,7 @@ const path = require("path");
 const fs = require("fs");
 const blogRoutes = require("./routes/BlogRoutes");
 
-//import user routes.
+// Import user routes.
 const userRoutes = require("./routes/UserRoutes");
 const contactRoutes = require("./routes/ContactRoutes");
 const subscriptionRoutes = require("./routes/SubscriptionRoutes");
@@ -16,6 +16,7 @@ const categoryRoutes = require("./routes/CategoryRoutes");
 const productRoutes = require("./routes/ProductRoutes");
 const vendorRoutes = require("./routes/VendorRoutes");
 const outletRoutes = require("./routes/OutletRoutes");
+const reviewRoutes = require("./routes/ReviewRoutes"); // Added Review API Route
 
 dotenv.config();
 const app = express();
@@ -44,6 +45,7 @@ app.use("/api", categoryRoutes);
 app.use("/api", productRoutes);
 app.use("/api", vendorRoutes);
 app.use("/api", outletRoutes);
+app.use("/api", reviewRoutes); // Added Review Routes
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -57,7 +59,7 @@ app.use((req, res, next) => {
 const PORT = process.env.PORT;
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/allora")
+  .connect("mongodb://127.0.0.1:27017/eventrix")
   .then(() => {
     console.log("Connected to mongodb.");
   })

@@ -12,8 +12,8 @@ import { AuthProvider } from "./components/common_components/AuthContext";
 import PrivateRoutes from "./components/auth_components/PrivateRoutes";
 
 import Homepage from "./pages/common_pages/Homepage";
-import Header from "./components/header_components/Header";
-import Footer from "./components/footer_components/Footer";
+// import Header from "./components/header_components/Header";
+// import Footer from "./components/footer_components/Footer";
 import PageNotFound from "./pages/common_pages/PageNotFound";
 import ContactUs from "./pages/contact_pages/ContactUs";
 import TopHeader from "./components/header_components/TopHeader";
@@ -31,9 +31,11 @@ import UpdateProfile from "./pages/user_pages/UpdateProfile";
 // blog pages.
 import AllBlogs from "./pages/blog_pages/AllBlogs";
 import SingleBlog from "./pages/blog_pages/SingleBlog";
+import Review from "./pages/user_pages/Review";
+import Services from "./pages/service_pages/ServicePage";
 
 // newsletter
-import NewsLetter from "./components/common_components/NewsLetter";
+// import NewsLetter from "./components/common_components/NewsLetter";
 
 // ✅ Function to dynamically update the page title based on the current route
 const TitleUpdater = () => {
@@ -52,11 +54,13 @@ const TitleUpdater = () => {
       if (pathname.startsWith("/reset-password/")) return "Reset Password";
       if (pathname.startsWith("/profile/")) return "Profile";
       if (pathname.startsWith("/all-blogs")) return "All Blogs";
+      if (pathname.startsWith("/review")) return "Review";
+      if (pathname.startsWith("/services")) return "services";
       if (pathname.startsWith("/single-blog/")) return "Single Blog";
       return "Page Not Found";
     };
 
-    document.title = `${getPageTitle(location.pathname)} - Allora`;
+    document.title = `${getPageTitle(location.pathname)} - Eventrix`;
   }, [location.pathname]); // ✅ Runs only when pathname changes
 
   return null;
@@ -68,7 +72,7 @@ function App() {
       <Router>
         <TitleUpdater /> {/* ✅ Ensures the title updates dynamically */}
         <ToastContainer />
-        <Header />
+        {/* <Header /> */}
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Homepage />} />
@@ -78,10 +82,12 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/reviews" element={<Review />} />
           <Route path="/all-blogs" element={<AllBlogs />} />
           <Route path="/single-blog/:id" element={<SingleBlog />} />
           <Route path="/page-not-found" element={<PageNotFound />} />
           <Route path="/*" element={<PageNotFound />} />
+          <Route path="/services" element={<Services />} />
 
           {/* Private Routes with Role-Based Access */}
           <Route
@@ -100,6 +106,7 @@ function App() {
               </PrivateRoutes>
             }
           />
+
 
           {/* user pages */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -124,8 +131,8 @@ function App() {
             }
           />
         </Routes>
-        <NewsLetter />
-        <Footer />
+        {/* <NewsLetter /> */}
+        {/* <Footer /> */}
       </Router>
     </AuthProvider>
   );
