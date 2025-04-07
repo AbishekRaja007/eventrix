@@ -4,13 +4,12 @@ import backendGlobalRoute from "../../config/config";
 
 const Servicepage = () => {
   const [categories, setCategories] = useState([]);
-  const placeholderImage = "/path-to-your-placeholder-image.jpg"; // Default image if no image is available
+  const placeholderImage = "/path-to-your-placeholder-image.jpg"; // Replace with your actual placeholder path
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${backendGlobalRoute}/api/all-categories`);
-        console.log("Fetched Categories:", response.data);
         setCategories(response.data);
       } catch (error) {
         console.log("Error fetching categories:", error);
@@ -32,7 +31,7 @@ const Servicepage = () => {
         {/* Divider */}
         <div className="border-t border-gray-400 my-6"></div>
 
-        {/* Services Section with Vertical Lines */}
+        {/* Services Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-start">
           {categories.length > 0 ? (
             categories.map((category, index) => (
@@ -44,11 +43,15 @@ const Servicepage = () => {
               >
                 {/* Category Image */}
                 <img
-                  src={category.image_url ? category.image_url : placeholderImage}
+                  src={
+                    category.category_image
+                      ? `${backendGlobalRoute}/uploads/categories/${category.category_image}`
+                      : placeholderImage
+                  }
                   alt={category.category_name}
                   className="w-full h-80 object-cover rounded-lg shadow-md"
                 />
-                
+
                 {/* Category Name */}
                 <h2 className="text-xl italic text-gray-700 mt-4">
                   {category.category_name}
