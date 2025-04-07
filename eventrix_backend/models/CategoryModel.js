@@ -5,9 +5,17 @@ const categorySchema = new mongoose.Schema({
   category_name: { type: String, required: true, unique: true }, // Category Name
   description: { type: String }, // Category Description
   category_image: { type: String }, // Image filename (path stored in DB)
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }], // Array of products linked to this category
-  createdAt: { type: Date, default: Date.now }, // Timestamp for record creation
-  updatedAt: { type: Date, default: Date.now }, // Timestamp for last update
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }], // Linked products
+  vendorEnabled: { type: Boolean, default: false }, // Show vendor field in product form
+  outletEnabled: { type: Boolean, default: false }, // Show outlet field in product form
+  properties: [
+    {
+      name: { type: String },
+      type: { type: String }, // e.g., text, number, dropdown, etc.
+    }
+  ],
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 // Pre-save middleware to update 'updatedAt' field automatically

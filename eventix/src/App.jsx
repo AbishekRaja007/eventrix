@@ -18,6 +18,7 @@ import PageNotFound from "./pages/common_pages/PageNotFound";
 import ContactUs from "./pages/contact_pages/ContactUs";
 import TopHeader from "./components/header_components/TopHeader";
 import AboutUs from "./pages/common_pages/AboutUs";
+import Shop from "./pages/Shop_pages/Shop";
 
 // user pages.
 import Login from "./pages/user_pages/Login";
@@ -88,6 +89,7 @@ function App() {
           <Route path="/page-not-found" element={<PageNotFound />} />
           <Route path="/*" element={<PageNotFound />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/shop" element={<Shop />} />
 
           {/* Private Routes with Role-Based Access */}
           <Route
