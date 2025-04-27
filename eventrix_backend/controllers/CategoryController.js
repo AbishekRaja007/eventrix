@@ -32,6 +32,7 @@ const addCategory = async (req, res) => {
       vendorEnabled,
       outletEnabled,
       properties,
+      tags, // ✅ grab tags from body
     } = req.body;
 
     // Check if category already exists
@@ -43,12 +44,17 @@ const addCategory = async (req, res) => {
     // Process uploaded image
     const category_image = req.file ? req.file.path : "";
 
-    // Parse properties (if sent as JSON string from frontend)
+    // Parse properties
     let parsedProperties = [];
     if (properties) {
-      parsedProperties = typeof properties === "string"
-        ? JSON.parse(properties)
-        : properties;
+      parsedProperties =
+        typeof properties === "string" ? JSON.parse(properties) : properties;
+    }
+
+    // ✅ Parse tags if sent as JSON string
+    let parsedTags = [];
+    if (tags) {
+      parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
     }
 
     const newCategory = new Category({
@@ -58,6 +64,7 @@ const addCategory = async (req, res) => {
       vendorEnabled,
       outletEnabled,
       properties: parsedProperties,
+      tags: parsedTags, // ✅ save tags
     });
 
     await newCategory.save();

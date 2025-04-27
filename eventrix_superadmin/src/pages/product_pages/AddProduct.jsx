@@ -18,6 +18,7 @@ const AddProduct = () => {
   const [outlets, setOutlets] = useState([]);
   const [dynamicFields, setDynamicFields] = useState({});
 
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -78,7 +79,13 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Basic form validation
+    if (!productName || !description || !category || !sellingPrice) {
+      alert("Please fill out all required fields.");
+      return;
+    }
+  
     const formData = new FormData();
     formData.append("product_name", productName);
     formData.append("description", description);
@@ -86,29 +93,30 @@ const AddProduct = () => {
     formData.append("selling_price", sellingPrice);
     formData.append("display_price", displayPrice);
     formData.append("category", category);
-
+  
+    // Vendor and outlet fields only added if enabled and filled
     if (vendorEnabled && vendor) {
       formData.append("vendor", vendor);
     }
-
+  
     if (outletEnabled && outlet) {
       formData.append("outlet", outlet);
     }
-
+  
     if (mainImage) {
       formData.append("main_image", mainImage);
     }
-
+  
     additionalImages.forEach((img) => {
       formData.append("additional_images", img);
     });
-
+  
     for (const key in dynamicFields) {
       formData.append(`properties[${key}]`, dynamicFields[key]);
     }
-
+  
     try {
-      await axios.post(`${backendGlobalRoute}/api/products`, formData, {
+      await axios.post(`${backendGlobalRoute}/api/add-product`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Product created successfully!");
@@ -117,6 +125,7 @@ const AddProduct = () => {
       alert("Failed to create product.");
     }
   };
+  
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow">
@@ -133,6 +142,8 @@ const AddProduct = () => {
             required
           />
         </div>
+
+       
 
         {/* Description */}
         <div>
@@ -267,17 +278,31 @@ const AddProduct = () => {
 
         {/* Dynamic Fields */}
         {dynamicProperties.map((prop, index) => (
-          <div key={index}>
-            <label className="block font-medium capitalize">{prop.name}</label>
-            <input
-              type={prop.type || "text"}
-              name={prop.name}
-              value={dynamicFields[prop.name] || ""}
-              onChange={handleDynamicFieldChange}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-        ))}
+  <div key={index}>
+    <label className="block font-medium capitalize">{prop.name}</label>
+    {prop.type === "boolean" ? (
+      <select
+        name={prop.name}
+        value={dynamicFields[prop.name] || ""}
+        onChange={handleDynamicFieldChange}
+        className="w-full border p-2 rounded"
+      >
+        <option value="">Select</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    ) : (
+      <input
+        type={prop.type || "text"}
+        name={prop.name}
+        value={dynamicFields[prop.name] || ""}
+        onChange={handleDynamicFieldChange}
+        className="w-full border p-2 rounded"
+      />
+    )}
+  </div>
+))}
+
 
         {/* Submit */}
         <button

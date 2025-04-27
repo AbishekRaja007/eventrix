@@ -1,77 +1,120 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import backendGlobalRoute from "../../config/config";
+import "./ServicePage.css";
 
-const Servicepage = () => {
+// New helper component for tag‐list with “show more”
+const TagList = ({ tags }) => {
+  const [expanded, setExpanded] = useState(false);
+  if (!tags || tags.length === 0) return null;
+
+  const limit = 5;
+  const visibleTags = expanded ? tags : tags.slice(0, limit);
+  const hiddenCount = tags.length - limit;
+
+  return (
+    <>
+      
+  <ul className="project__tags flex-group" role="list">
+    {visibleTags.map((tag, i) => (
+      <li key={i} className="project__tag">
+        {tag}
+      </li>
+    ))}
+
+    {!expanded && hiddenCount > 0 && (
+      <li
+        className="project__tag cursor-pointer"
+        onClick={() => setExpanded(true)}
+      >
+        +{hiddenCount}
+      </li>
+    )}
+
+    {expanded && tags.length > limit && (
+      <li
+        className="project__tag project__tag--showless cursor-pointer"
+        onClick={() => setExpanded(false)}
+      >
+        Show less
+      </li>
+    )}
+  </ul>
+    </>
+  );
+};
+
+const ServicePages = () => {
   const [categories, setCategories] = useState([]);
-  const placeholderImage = "/path-to-your-placeholder-image.jpg"; // Replace with your actual placeholder path
+  const placeholderImage = "/path-to-your-placeholder-image.jpg";
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${backendGlobalRoute}/api/all-categories`);
+        const response = await axios.get(
+          `${backendGlobalRoute}/api/all-categories`
+        );
         setCategories(response.data);
       } catch (error) {
-        console.log("Error fetching categories:", error);
+        console.error("Error fetching categories:", error);
       }
     };
-
     fetchCategories();
   }, []);
 
   return (
-    <div className="bg-white py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Top Text */}
-        <div className="flex justify-between text-sm uppercase tracking-widest text-gray-700 px-4">
-          <span>Explore Our Services</span>
-          <span>Texas & Destinations</span>
-        </div>
+    <section>
+      <div className="projects container">
+        <h2 className="section-title">Explore Our Services</h2>
 
-        {/* Divider */}
-        <div className="border-t border-gray-400 my-6"></div>
-
-        {/* Services Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-start">
-          {categories.length > 0 ? (
-            categories.map((category, index) => (
-              <div
-                key={index}
-                className={`flex flex-col items-center text-center ${
-                  index !== 0 ? "border-l border-gray-300" : ""
-                }`}
-              >
-                {/* Category Image */}
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <article className="project" key={category._id}>
+              <div className="project__img-container">
                 <img
+                  className="project__img"
                   src={
                     category.category_image
-                      ? `${backendGlobalRoute}/uploads/categories/${category.category_image}`
+                      ? `${backendGlobalRoute}/${category.category_image.replace(
+                          /\\/g,
+                          "/"
+                        )}`
                       : placeholderImage
                   }
                   alt={category.category_name}
-                  className="w-full h-80 object-cover rounded-lg shadow-md"
                 />
-
-                {/* Category Name */}
-                <h2 className="text-xl italic text-gray-700 mt-4">
-                  {category.category_name}
-                </h2>
-
-                {/* Category Description */}
-                <p className="text-gray-600 text-sm mt-2 px-4">
-                  {category.description
-                    ? category.description
-                    : "Provide a summary of your packages right here, and why it's best for them."}
-                </p>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-600 col-span-3">Loading services...</p>
-          )}
-        </div>
+
+              <div className="project__content grid-flow">
+                <h3 className="project__title">
+                  {category.category_name}
+                </h3>
+
+                {/* Dynamically fetched tags, capped at 5 with “+N” toggler */}
+                <TagList tags={category.tags} />
+
+                <p>
+                  {category.description ||
+                    "Provide a summary of your packages right here, and why it's best for them."}
+                </p>
+
+                <Link
+                  className="project__cta"
+                  to={`/category/${category._id}`}
+                >
+                  View Service
+                </Link>
+
+              </div>
+            </article>
+          ))
+        ) : (
+          <p className="text-center text-gray-600">Loading services...</p>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
 
-export default Servicepage;
+export default ServicePages;
