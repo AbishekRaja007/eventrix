@@ -35,6 +35,8 @@ import SingleBlog from "./pages/blog_pages/SingleBlog";
 import Review from "./pages/user_pages/Review";
 import Services from "./pages/service_pages/ServicePage";
 
+
+
 // newsletter
 // import NewsLetter from "./components/common_components/NewsLetter";
 
@@ -57,6 +59,7 @@ const TitleUpdater = () => {
       if (pathname.startsWith("/all-blogs")) return "All Blogs";
       if (pathname.startsWith("/review")) return "Review";
       if (pathname.startsWith("/services")) return "services";
+      
       if (pathname.startsWith("/single-blog/")) return "Single Blog";
       return "Page Not Found";
     };
@@ -89,6 +92,8 @@ function App() {
           <Route path="/page-not-found" element={<PageNotFound />} />
           <Route path="/*" element={<PageNotFound />} />
           <Route path="/services" element={<Services />} />
+   
+         
           <Route path="/shop" element={<Shop />} />
 
           {/* Private Routes with Role-Based Access */}

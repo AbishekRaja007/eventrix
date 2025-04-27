@@ -12,6 +12,10 @@ export default function AddCategory() {
   const [vendorEnabled, setVendorEnabled] = useState(false);
   const [outletEnabled, setOutletEnabled] = useState(false);
 
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+
+
   const handleImageChange = (e) => {
     setCategoryImage(e.target.files[0]);
   };
@@ -26,6 +30,22 @@ export default function AddCategory() {
     setCustomProperties([...customProperties, { name: "", type: "text" }]);
   };
 
+  const handleTagKeyDown = (e) => {
+    if ((e.key === "Enter" || e.key === ",") && tagInput.trim()) {
+      e.preventDefault();
+      const newTag = tagInput.trim().toLowerCase();
+      if (!tags.includes(newTag)) {
+        setTags([...tags, newTag]);
+      }
+      setTagInput("");
+    }
+  };
+  
+  const removeTag = (indexToRemove) => {
+    setTags(tags.filter((_, index) => index !== indexToRemove));
+  };
+  
+
   const removePropertyField = (index) => {
     const updated = [...customProperties];
     updated.splice(index, 1);
@@ -34,11 +54,11 @@ export default function AddCategory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const filteredCustomProps = customProperties.filter(
       (prop) => prop.name.trim() !== ""
     );
-
+  
     const formData = new FormData();
     formData.append("category_name", categoryName);
     formData.append("description", description);
@@ -48,7 +68,8 @@ export default function AddCategory() {
     formData.append("properties", JSON.stringify(filteredCustomProps));
     formData.append("vendorEnabled", vendorEnabled);
     formData.append("outletEnabled", outletEnabled);
-
+    formData.append("tags", JSON.stringify(tags));
+  
     try {
       const response = await axios.post(
         `${backendGlobalRoute}/api/add-category`,
@@ -57,21 +78,29 @@ export default function AddCategory() {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
+  
       alert("Category added successfully!");
       setMessage("Category added successfully!");
+  
+      // Reset form fields
       setCategoryName("");
       setDescription("");
       setCategoryImage(null);
       setCustomProperties([]);
       setVendorEnabled(false);
       setOutletEnabled(false);
+      setTags([]);
+      setTagInput("");
+  
+      // Reset the file input field visually
+      document.getElementById("categoryImage").value = "";
+  
     } catch (error) {
       console.error("Error adding category:", error.response?.data || error);
       setMessage("Error adding category. Please try again.");
     }
   };
-
+  
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-4">Add New Category</h2>
@@ -119,6 +148,38 @@ export default function AddCategory() {
             className="w-full px-3 py-2 border rounded"
           />
         </div>
+
+
+        {/* Tags */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Tags</label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {tags.map((tag, index) => (
+              <span
+                key={index}
+                className="flex items-center bg-blue-100 text-blue-700 px-2 py-1 rounded-full"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => removeTag(index)}
+                  className="ml-1 text-red-500 font-bold"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <input
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleTagKeyDown}
+            placeholder="Enter a tag and press Enter"
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+
 
         {/* Custom Properties */}
         <div className="mb-4">

@@ -2,18 +2,19 @@ const mongoose = require("mongoose");
 
 // Category Schema
 const categorySchema = new mongoose.Schema({
-  category_name: { type: String, required: true, unique: true }, // Category Name
-  description: { type: String }, // Category Description
-  category_image: { type: String }, // Image filename (path stored in DB)
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }], // Linked products
-  vendorEnabled: { type: Boolean, default: false }, // Show vendor field in product form
-  outletEnabled: { type: Boolean, default: false }, // Show outlet field in product form
+  category_name: { type: String, required: true, unique: true },
+  description: { type: String },
+  category_image: { type: String },
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  vendorEnabled: { type: Boolean, default: false },
+  outletEnabled: { type: Boolean, default: false },
   properties: [
     {
       name: { type: String },
-      type: { type: String }, // e.g., text, number, dropdown, etc.
+      type: { type: String },
     }
   ],
+  tags: [{ type: String }], // ✅ New field for tags
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
