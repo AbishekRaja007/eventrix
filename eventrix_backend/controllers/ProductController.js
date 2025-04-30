@@ -3,6 +3,8 @@ const path = require("path");
 const multer = require("multer");
 const Product = require("../models/ProductModel");
 const Category = require("../models/CategoryModel");
+const Vendor = require("../models/VendorModel"); // Import Vendor model
+const Outlet = require("../models/OutletModel"); // Import Outlet model
 
 // Multer setup
 const productStorage = multer.diskStorage({
@@ -26,6 +28,7 @@ const generateSKU = () => {
   return `SKU-${Date.now().toString(36)}-${Math.floor(Math.random() * 10000).toString(36).toUpperCase()}`;
 };
 
+// Add Product
 const addProduct = async (req, res) => {
   try {
     const {
@@ -34,10 +37,11 @@ const addProduct = async (req, res) => {
       availability_status,
       category,
       vendor,
-      outlet, // may still be sent as a single outlet for now
-      outlets, // optional: if you send multiple outlets
+      outlet,
+      outlets,
       selling_price,
       display_price,
+      properties,
     } = req.body;
 
     // Validate Category
@@ -54,13 +58,14 @@ const addProduct = async (req, res) => {
       return res.status(400).json({ message: "Outlet is required for this category" });
     }
 
-    // Extract dynamic properties from category
-    const properties = {};
+    // Parse and validate dynamic properties
+    const parsedProperties = properties ? JSON.parse(properties) : {};
+    const validProperties = {};
+
     if (Array.isArray(categoryDoc.properties)) {
       categoryDoc.properties.forEach((prop) => {
-        const key = `properties[${prop.name}]`;
-        if (req.body[key]) {
-          properties[prop.name] = req.body[key];
+        if (parsedProperties[prop.name] !== undefined) {
+          validProperties[prop.name] = parsedProperties[prop.name];
         }
       });
     }
@@ -77,14 +82,14 @@ const addProduct = async (req, res) => {
       all_product_images = req.files.additional_images.map((file) => file.path);
     }
 
-    // Use single outlet or array of outlets
+    // Use single outlet or multiple
     const outletArray = outlets
       ? JSON.parse(outlets)
       : outlet
       ? [outlet]
       : [];
 
-    // Create product document
+    // Create product with properties
     const newProduct = new Product({
       product_name,
       description,
@@ -97,14 +102,29 @@ const addProduct = async (req, res) => {
       outlets: outletArray,
       selling_price: parseFloat(selling_price),
       display_price: parseFloat(display_price),
-      properties,
+      properties: validProperties,
     });
 
-    await newProduct.save();
+    const savedProduct = await newProduct.save();
+
+    // Update vendor's products array if vendor is provided
+    if (vendor) {
+      await Vendor.findByIdAndUpdate(vendor, {
+        $push: { products: { product: savedProduct._id, quantity: 1 } },
+      });
+    }
+
+    // Update outlet's products array if outlet(s) are provided
+    if (outletArray.length > 0) {
+      await Outlet.updateMany(
+        { _id: { $in: outletArray } },
+        { $push: { products: { product: savedProduct._id, quantity: 1 } } }
+      );
+    }
 
     res.status(201).json({
       message: "Product added successfully",
-      product: newProduct,
+      product: savedProduct,
     });
   } catch (error) {
     console.error("Error adding product:", error);
@@ -112,17 +132,19 @@ const addProduct = async (req, res) => {
   }
 };
 
+
+// Get All Products
 const getAllAddedProducts = async (req, res) => {
   try {
     const products = await Product.find()
       .populate("category")
       .populate("vendor")
-      .populate("outlets"); // updated from outlet_pricing.outlet to outlets
+      .populate("outlets");
 
     const enrichedProducts = products.map((product) => {
       return {
         ...product.toObject(),
-        lowestPrice: product.selling_price || 0, // use selling_price directly
+        lowestPrice: product.selling_price || 0,
       };
     });
 
@@ -133,8 +155,59 @@ const getAllAddedProducts = async (req, res) => {
   }
 };
 
+// Get Products By Category (NEW)
+const getProductsByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    const products = await Product.find({ category: categoryId })
+      .populate("vendor")
+      .populate("outlets");
+
+    res.status(200).json({
+      categoryName: category.category_name,
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching products by category:", error);
+    res.status(500).json({ message: "Failed to fetch products by category", error: error.message });
+  }
+};
+
+
+// Get Single Product by ID
+const getSingleProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const product = await Product.findById(productId)
+      .populate("category")
+      .populate("vendor")
+      .populate("outlets");
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    console.log("Product Properties:", product.properties);
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error fetching single product:", error);
+    res.status(500).json({ message: "Failed to fetch product", error: error.message });
+  }
+};
+
+
+
 module.exports = {
   addProduct,
   productUpload,
   getAllAddedProducts,
+  getSingleProduct,
+  getProductsByCategory, // Exporting new controller
 };
