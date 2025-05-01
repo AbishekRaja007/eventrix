@@ -2,16 +2,16 @@ import React from "react";
 
 const Header = () => {
   return (
-    <header className="fixed top-[20px] left-0 w-full h-[0px]  bg-transparent font-bold text-black   z-50">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="fixed top-[20px] left-0 w-full h-[0px] bg-transparent font-bold text-black z-50 ">
+      <div className=" w-[1400px] mx-auto flex justify-start items-center">
         {/* Logo and Title */}
-        <h1 className="text-5xl font-serif uppercase ">
+        <h1 className="text-5xl font-serif uppercase">
           <span className="text-yellow-400">Eventri</span>
           <span className="text-black">x</span>
         </h1>
 
         {/* Navbar */}
-        <nav>
+        <nav className="ml-auto">
           <ul className="flex gap-6 text-lg">
             <li>
               <a className="hover:text-yellow-400 transition" href="#">
@@ -39,13 +39,13 @@ const Header = () => {
                 <li>
                   <a
                     className="block px-4 py-2 hover:bg-gray-200 rounded-[10px]"
-                    href="loginpage"
+                    href="/login"
                   >
                     Login
                   </a>
                 </li>
                 <li>
-                  <a className="block px-4 py-2 hover:bg-gray-200 rounded-[10px]" href="#">
+                  <a className="block px-4 py-2 hover:bg-gray-200 rounded-[10px]" href="/register">
                     Sign Up
                   </a>
                 </li>

@@ -111,9 +111,8 @@ const AddProduct = () => {
       formData.append("additional_images", img);
     });
   
-    for (const key in dynamicFields) {
-      formData.append(`properties[${key}]`, dynamicFields[key]);
-    }
+    // Send all dynamic fields as one JSON blob
+    formData.append("properties", JSON.stringify(dynamicFields));
   
     try {
       await axios.post(`${backendGlobalRoute}/api/add-product`, formData, {
@@ -125,6 +124,7 @@ const AddProduct = () => {
       alert("Failed to create product.");
     }
   };
+  
   
 
   return (
