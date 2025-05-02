@@ -12,7 +12,7 @@ import Header from "../../components/header_components/Header";
 
 const Homepage = () => {
   return (
-    <div className="relative ">
+  <div className="relative ">
       
       <Header />
 
