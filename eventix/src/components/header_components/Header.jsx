@@ -1,61 +1,69 @@
 import React from "react";
+import {
+  FaInstagram,
+  FaFacebookF,
+  FaTiktok,
+  FaPinterestP,
+} from "react-icons/fa";
 
 const Header = () => {
   return (
-    <header className="fixed top-[20px] left-0 w-full h-[0px] bg-transparent font-bold text-black z-50 ">
-      <div className=" w-[1400px] mx-auto flex justify-start items-center">
-        {/* Logo and Title */}
-        <h1 className="text-5xl font-serif uppercase">
-          <span className="text-yellow-400">Eventri</span>
-          <span className="text-black">x</span>
-        </h1>
+    <header className="w-full absolute top-2 left-0 z-50 bg-transparent text-white">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Left: Social Icons */}
+        <div className="flex items-center space-x-4 text-white text-lg">
+          <FaInstagram />
+          <FaFacebookF />
+          <FaTiktok />
+          <FaPinterestP />
+        </div>
 
-        {/* Navbar */}
-        <nav className="ml-auto">
-          <ul className="flex gap-6 text-lg">
-            <li>
-              <a className="hover:text-yellow-400 transition" href="#">
-                Home
-              </a>
-            </li>
-            <li>
-              <a className="hover:text-yellow-400 transition" href="/Aboutus">
-                About Us
-              </a>
-            </li>
-            <li>
-              <a className="hover:text-yellow-400 transition" href="/contact-us">
-                Contact Us
-              </a>
-            </li>
-            <li className="relative group">
-              <a
-                className="hover:text-yellow-400 transition cursor-pointer"
-            
-              >
-                Account
-              </a>
-              <ul className="absolute left-0 hidden  w-28 bg-white text-black shadow-lg group-hover:block rounded-[10px]">
-                <li>
-                  <a
-                    className="block px-4 py-2 hover:bg-gray-200 rounded-[10px]"
-                    href="/login"
-                  >
-                    Login
-                  </a>
-                </li>
-                <li>
-                  <a className="block px-4 py-2 hover:bg-gray-200 rounded-[10px]" href="/register">
-                    Sign Up
-                  </a>
-                </li>
-              </ul>
-            </li>
-          </ul>
+        {/* Center: Navigation Links */}
+        <nav className="hidden md:flex items-center space-x-8 text-white text-sm tracking-widest font-medium">
+          
+         
+          <a href="#blog" className="hover:text-gray-300">BLOG</a>
+          <a href="/contact-us" className="hover:text-gray-300">CONTACT</a>
+          <a href="/Aboutus" className="hover:text-gray-300">ABOUT</a>
+
+          {/* Account Dropdown */}
+          <div className="relative group">
+            <button className=" cursor-pointer">ACCOUNT</button>
+            <ul className="absolute left-0  hidden group-hover:block bg-transparent text-white text-left rounded-md shadow-lg min-w-[140px] z-50 ">
+              <li>
+                <a
+                  className="block px-4 py-2  rounded-t-md"
+                  href="/login"
+                >
+                  Login
+                </a>
+              </li>
+              <li>
+                <a
+                  className="block px-4 py-2 hover:text-gray-400 rounded-b-md"
+                  href="/register"
+                >
+                  Sign Up
+                </a>
+              </li>
+            </ul>
+          </div>
         </nav>
+
+        {/* Right: Book Button */}
+        <div>
+        <a
+  href="/services"
+  className="border border-white  text-sm tracking-widest px-8 py-3 rounded-full hover:text-black hover:bg-white transition duration-300"
+>
+  BOOK YOUR SESSION
+</a>
+        
+        </div>
       </div>
     </header>
   );
 };
 
 export default Header;
+

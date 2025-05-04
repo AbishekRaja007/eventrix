@@ -36,7 +36,6 @@ import Review from "./pages/user_pages/Review";
 import Services from "./pages/service_pages/ServicePage";
 import CategoryProducts from "./pages/service_pages/CategoryProducts";
 import SingleProduct from "./pages/service_pages/SingleProduct";
-import CategoryProductpage from "./pages/service_pages/CategoryProductsPage";
 
 
 
@@ -99,7 +98,7 @@ function App() {
           <Route path="/category/:categoryId" element={<CategoryProducts />} />
           <Route path="/product/:productId" element={<SingleProduct />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/categoryproductpage" element={<CategoryProductpage />} />       
+          
 
           
 
