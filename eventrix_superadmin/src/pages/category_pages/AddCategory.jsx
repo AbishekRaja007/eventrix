@@ -8,7 +8,7 @@ export default function AddCategory() {
   const [categoryImage, setCategoryImage] = useState(null);
   const [customProperties, setCustomProperties] = useState([]);
   const [message, setMessage] = useState("");
-
+  const [locationEnabled, setLocationEnabled] = useState(false);
   const [vendorEnabled, setVendorEnabled] = useState(false);
   const [outletEnabled, setOutletEnabled] = useState(false);
 
@@ -20,9 +20,38 @@ export default function AddCategory() {
     setCategoryImage(e.target.files[0]);
   };
 
+  // Add support for dropdown options in custom properties
   const handleCustomPropertyChange = (index, key, value) => {
     const updated = [...customProperties];
     updated[index][key] = value;
+    if (key === "type" && value !== "dropdown") {
+      delete updated[index].options; // Remove options if type is not dropdown
+    }
+    setCustomProperties(updated);
+  };
+
+  const addDropdownOption = (index) => {
+    const updated = [...customProperties];
+    if (!updated[index].options) {
+      updated[index].options = [];
+    }
+    updated[index].options.push("");
+    setCustomProperties(updated);
+  };
+
+  const handleDropdownOptionChange = (index, optionIndex, value) => {
+    const updated = [...customProperties];
+    if (updated[index].options) {
+      updated[index].options[optionIndex] = value;
+    }
+    setCustomProperties(updated);
+  };
+
+  const removeDropdownOption = (index, optionIndex) => {
+    const updated = [...customProperties];
+    if (updated[index].options) {
+      updated[index].options.splice(optionIndex, 1);
+    }
     setCustomProperties(updated);
   };
 
@@ -68,6 +97,8 @@ export default function AddCategory() {
     formData.append("properties", JSON.stringify(filteredCustomProps));
     formData.append("vendorEnabled", vendorEnabled);
     formData.append("outletEnabled", outletEnabled);
+    formData.append("locationEnabled", locationEnabled);
+
     formData.append("tags", JSON.stringify(tags));
   
     try {
@@ -208,7 +239,39 @@ export default function AddCategory() {
                 <option value="number">Number</option>
                 <option value="date">Date</option>
                 <option value="boolean">Boolean</option>
+                <option value="dropdown">Dropdown</option>
               </select>
+              {prop.type === "dropdown" && (
+                <div className="w-full">
+                  {prop.options?.map((option, optionIndex) => (
+                    <div key={optionIndex} className="flex gap-2 mb-2 items-center">
+                      <input
+                        type="text"
+                        placeholder="Option"
+                        value={option}
+                        onChange={(e) =>
+                          handleDropdownOptionChange(index, optionIndex, e.target.value)
+                        }
+                        className="w-full px-3 py-2 border rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeDropdownOption(index, optionIndex)}
+                        className="text-red-600 font-bold"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addDropdownOption(index)}
+                    className="mt-2 px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    + Add Option
+                  </button>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() => removePropertyField(index)}
@@ -232,7 +295,7 @@ export default function AddCategory() {
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Additional Fields Options
           </label>
-          <div className="flex gap-6">
+          <div className="flex gap-6 flex-wrap">
             <label className="inline-flex items-center">
               <input
                 type="checkbox"
@@ -251,8 +314,18 @@ export default function AddCategory() {
               />
               <span className="ml-2 text-gray-700">Enable Outlet Field</span>
             </label>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={locationEnabled}
+                onChange={(e) => setLocationEnabled(e.target.checked)}
+                className="form-checkbox h-4 w-4 text-blue-600"
+              />
+              <span className="ml-2 text-gray-700">Enable Location Field</span>
+            </label>
           </div>
         </div>
+
 
         {/* Submit Button */}
         <div className="mb-4">

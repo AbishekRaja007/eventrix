@@ -71,6 +71,7 @@ import AllVendors from "./pages/vendor_pages/AllVendors";
 import SingleVendor from "./pages/vendor_pages/SingleVendor";
 import AddRawMaterialToVendor from "./pages/vendor_pages/AddRawMaterialToVendor";
 import AllRawMaterials from "./pages/vendor_pages/AllRawMaterials";
+import AddSubCategory from "./pages/Subcategory/AddSubCategory";
 
 // ✅ Function to dynamically update the page title based on the current route
 const TitleUpdater = () => {
@@ -141,6 +142,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/page-not-found" element={<PageNotFound />} />
+          <Route path="/addsubcategory" element={<AddSubCategory />} />
           <Route path="/*" element={<PageNotFound />} />
 
           {/* Private Routes with Role-Based Access */}

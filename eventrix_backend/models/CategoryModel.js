@@ -8,13 +8,24 @@ const categorySchema = new mongoose.Schema({
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   vendorEnabled: { type: Boolean, default: false },
   outletEnabled: { type: Boolean, default: false },
+  locationEnabled: { type: Boolean, default: false },
+
   properties: [
     {
       name: { type: String },
       type: { type: String },
+      options: [{ type: String }], // New field for dropdown options
     }
   ],
   tags: [{ type: String }], // ✅ New field for tags
+
+  // ✅ Simplified location as strings (no geospatial format)
+  location: {
+    address: { type: String },
+    latitude: { type: String },
+    longitude: { type: String },
+  },
+
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

@@ -17,7 +17,17 @@ const AddProduct = () => {
   const [vendors, setVendors] = useState([]);
   const [outlets, setOutlets] = useState([]);
   const [dynamicFields, setDynamicFields] = useState({});
+  const [address, setAddress] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
+  // Handle dynamic fields for dropdown properties
+  const handleDynamicDropdownChange = (propertyName, value) => {
+    setDynamicFields({
+      ...dynamicFields,
+      [propertyName]: value,
+    });
+  };
 
   // Fetch categories
   useEffect(() => {
@@ -69,6 +79,7 @@ const AddProduct = () => {
   const dynamicProperties = selectedCategory?.properties || [];
   const vendorEnabled = selectedCategory?.vendorEnabled;
   const outletEnabled = selectedCategory?.outletEnabled;
+  const locationEnabled = selectedCategory?.locationEnabled;
 
   const handleDynamicFieldChange = (e) => {
     setDynamicFields({
@@ -79,13 +90,13 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Basic form validation
     if (!productName || !description || !category || !sellingPrice) {
       alert("Please fill out all required fields.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("product_name", productName);
     formData.append("description", description);
@@ -93,27 +104,37 @@ const AddProduct = () => {
     formData.append("selling_price", sellingPrice);
     formData.append("display_price", displayPrice);
     formData.append("category", category);
-  
+
+    // Combine address, latitude, and longitude into a single location JSON string
+    const location = JSON.stringify({
+      address,
+      coordinates: {
+        lat: parseFloat(latitude),
+        lng: parseFloat(longitude),
+      },
+    });
+    formData.append("location", location);
+
     // Vendor and outlet fields only added if enabled and filled
     if (vendorEnabled && vendor) {
       formData.append("vendor", vendor);
     }
-  
+
     if (outletEnabled && outlet) {
       formData.append("outlet", outlet);
     }
-  
+
     if (mainImage) {
       formData.append("main_image", mainImage);
     }
-  
+
     additionalImages.forEach((img) => {
       formData.append("additional_images", img);
     });
-  
+
     // Send all dynamic fields as one JSON blob
     formData.append("properties", JSON.stringify(dynamicFields));
-  
+
     try {
       await axios.post(`${backendGlobalRoute}/api/add-product`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -124,8 +145,6 @@ const AddProduct = () => {
       alert("Failed to create product.");
     }
   };
-  
-  
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow">
@@ -142,8 +161,6 @@ const AddProduct = () => {
             required
           />
         </div>
-
-       
 
         {/* Description */}
         <div>
@@ -278,31 +295,87 @@ const AddProduct = () => {
 
         {/* Dynamic Fields */}
         {dynamicProperties.map((prop, index) => (
-  <div key={index}>
-    <label className="block font-medium capitalize">{prop.name}</label>
-    {prop.type === "boolean" ? (
-      <select
-        name={prop.name}
-        value={dynamicFields[prop.name] || ""}
-        onChange={handleDynamicFieldChange}
-        className="w-full border p-2 rounded"
-      >
-        <option value="">Select</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
-    ) : (
-      <input
-        type={prop.type || "text"}
-        name={prop.name}
-        value={dynamicFields[prop.name] || ""}
-        onChange={handleDynamicFieldChange}
-        className="w-full border p-2 rounded"
-      />
-    )}
-  </div>
-))}
+          <div key={index}>
+            <label className="block font-medium capitalize">{prop.name}</label>
+            {prop.type === "boolean" ? (
+              <select
+                name={prop.name}
+                value={dynamicFields[prop.name] || ""}
+                onChange={handleDynamicFieldChange}
+                className="w-full border p-2 rounded"
+              >
+                <option value="">Select</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            ) : prop.type === "dropdown" ? (
+              <select
+                name={prop.name}
+                value={dynamicFields[prop.name] || ""}
+                onChange={(e) =>
+                  handleDynamicDropdownChange(prop.name, e.target.value)
+                }
+                className="w-full border p-2 rounded"
+              >
+                <option value="">Select</option>
+                {(prop.options || []).map((option, idx) => (
+                  <option key={idx} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type={prop.type || "text"}
+                name={prop.name}
+                value={dynamicFields[prop.name] || ""}
+                onChange={handleDynamicFieldChange}
+                className="w-full border p-2 rounded"
+              />
+            )}
+          </div>
+        ))}
 
+        {/* Location Fields (if enabled) */}
+        {locationEnabled && (
+          <>
+            <div>
+              <label className="block font-medium">Address</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full border p-2 rounded"
+                placeholder="Enter full address"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Latitude</label>
+              <input
+                type="number"
+                step="any"
+                value={latitude}
+                onChange={(e) => setLatitude(e.target.value)}
+                className="w-full border p-2 rounded"
+                placeholder="Enter latitude"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-medium">Longitude</label>
+              <input
+                type="number"
+                step="any"
+                value={longitude}
+                onChange={(e) => setLongitude(e.target.value)}
+                className="w-full border p-2 rounded"
+                placeholder="Enter longitude"
+                required
+              />
+            </div>
+          </>
+        )}
 
         {/* Submit */}
         <button
