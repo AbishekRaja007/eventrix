@@ -42,6 +42,7 @@ const addProduct = async (req, res) => {
       selling_price,
       display_price,
       properties,
+      location, // New location data
     } = req.body;
 
     // Validate Category
@@ -70,6 +71,39 @@ const addProduct = async (req, res) => {
       });
     }
 
+    // Transform location into GeoJSON format with fallback for missing coordinates
+    let locationData = null;
+    if (location) {
+      try {
+        const parsedLocation = JSON.parse(location); // Expect location to be in JSON format
+        if (!parsedLocation.address) {
+          return res.status(400).json({ message: "Address is required in location" });
+        }
+
+        if (
+          parsedLocation.coordinates &&
+          typeof parsedLocation.coordinates.lat === "number" &&
+          typeof parsedLocation.coordinates.lng === "number"
+        ) {
+          locationData = {
+            type: "Point",
+            coordinates: [
+              parsedLocation.coordinates.lng, // Longitude first
+              parsedLocation.coordinates.lat, // Latitude second
+            ],
+            address: parsedLocation.address, // Keep address as a separate field
+          };
+        } else {
+          // Fallback: Only store the address if coordinates are missing
+          locationData = {
+            address: parsedLocation.address,
+          };
+        }
+      } catch (error) {
+        return res.status(400).json({ message: "Error parsing location data" });
+      }
+    }
+
     // Image handling
     let product_image = null;
     let all_product_images = [];
@@ -89,7 +123,7 @@ const addProduct = async (req, res) => {
       ? [outlet]
       : [];
 
-    // Create product with properties
+    // Create product with properties and location
     const newProduct = new Product({
       product_name,
       description,
@@ -103,6 +137,7 @@ const addProduct = async (req, res) => {
       selling_price: parseFloat(selling_price),
       display_price: parseFloat(display_price),
       properties: validProperties,
+      location: locationData, // Save location data
     });
 
     const savedProduct = await newProduct.save();
@@ -132,7 +167,6 @@ const addProduct = async (req, res) => {
   }
 };
 
-
 // Get All Products
 const getAllAddedProducts = async (req, res) => {
   try {
@@ -155,7 +189,7 @@ const getAllAddedProducts = async (req, res) => {
   }
 };
 
-// Get Products By Category (NEW)
+// Get Products By Category
 const getProductsByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
@@ -179,7 +213,6 @@ const getProductsByCategory = async (req, res) => {
   }
 };
 
-
 // Get Single Product by ID
 const getSingleProduct = async (req, res) => {
   try {
@@ -201,8 +234,6 @@ const getSingleProduct = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch product", error: error.message });
   }
 };
-
-
 
 module.exports = {
   addProduct,

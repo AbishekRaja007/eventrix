@@ -32,7 +32,9 @@ const addCategory = async (req, res) => {
       vendorEnabled,
       outletEnabled,
       properties,
-      tags, // ✅ grab tags from body
+      tags,
+      locationEnabled,
+      location // this comes as an object: { address, latitude, longitude }
     } = req.body;
 
     // Check if category already exists
@@ -44,17 +46,36 @@ const addCategory = async (req, res) => {
     // Process uploaded image
     const category_image = req.file ? req.file.path : "";
 
-    // Parse properties
+    // Parse properties and include options for dropdowns
     let parsedProperties = [];
     if (properties) {
       parsedProperties =
         typeof properties === "string" ? JSON.parse(properties) : properties;
+
+      // Ensure dropdown options are included
+      parsedProperties = parsedProperties.map((prop) => {
+        if (prop.type === "dropdown" && !prop.options) {
+          prop.options = []; // Default to an empty array if options are missing
+        }
+        return prop;
+      });
     }
 
-    // ✅ Parse tags if sent as JSON string
+    // Parse tags
     let parsedTags = [];
     if (tags) {
       parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
+    }
+
+    // Parse location
+    let parsedLocation = {};
+    if (locationEnabled && location) {
+      const locObj = typeof location === "string" ? JSON.parse(location) : location;
+      parsedLocation = {
+        address: locObj.address || "",
+        latitude: locObj.latitude || "",
+        longitude: locObj.longitude || "",
+      };
     }
 
     const newCategory = new Category({
@@ -64,7 +85,9 @@ const addCategory = async (req, res) => {
       vendorEnabled,
       outletEnabled,
       properties: parsedProperties,
-      tags: parsedTags, // ✅ save tags
+      tags: parsedTags,
+      locationEnabled: locationEnabled === "true" || locationEnabled === true,
+      location: parsedLocation,
     });
 
     await newCategory.save();
@@ -93,5 +116,5 @@ const getAllCategories = async (req, res) => {
 module.exports = {
   addCategory,
   getAllCategories,
-  categoryUpload, // Export the multer middleware
+  categoryUpload,
 };

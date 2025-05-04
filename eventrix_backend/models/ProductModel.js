@@ -42,6 +42,20 @@ const productSchema = new mongoose.Schema({
     of: String,
   },
 
+  // ✅ New location field
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      required: true,
+    },
+    coordinates: {
+      type: [Number], // Array of [longitude, latitude]
+      required: true,
+    },
+    address: { type: String }, // Optional address field
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -51,6 +65,9 @@ const productSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+// Add geospatial index to the location field
+productSchema.index({ location: "2dsphere" });
 
 productSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
