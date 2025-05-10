@@ -31,18 +31,17 @@ const sendReplyEmail = (userEmail, userName, originalMessage, replyContent) => {
 
 // Controller to add a contact message
 exports.addContactMessage = async (req, res) => {
-  // Change made here
   try {
-    const { firstName, lastName, email, phone, message_text, agreeToLicense } =
-      req.body;
+    console.log("Incoming request data:", req.body); // Log incoming request data
 
-    if (!email || !firstName || !lastName || !message_text) {
+    const { firstName, email, phone, message_text, agreeToLicense } = req.body;
+
+    if (!email || !firstName || !message_text) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const newContactMessage = new ContactModel({
       firstName,
-      lastName,
       email,
       phone,
       message_text,
@@ -54,7 +53,7 @@ exports.addContactMessage = async (req, res) => {
       .status(201)
       .json({ message: "Contact message successfully submitted!" });
   } catch (error) {
-    console.error("Error saving contact message:", error);
+    console.error("Error saving contact message:", error); // Log detailed error
     res.status(500).json({
       error: "An error occurred while submitting the contact message.",
     });

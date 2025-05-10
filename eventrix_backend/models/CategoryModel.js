@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // Category Schema
 const categorySchema = new mongoose.Schema({
-  category_name: { type: String, required: true, unique: true },
+  category_name: { type: String, required: true }, // Remove `unique: true`
   description: { type: String },
   category_image: { type: String },
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
@@ -25,6 +25,8 @@ const categorySchema = new mongoose.Schema({
     latitude: { type: String },
     longitude: { type: String },
   },
+
+  category_types: [{ type: String }], // New field for category types
 
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

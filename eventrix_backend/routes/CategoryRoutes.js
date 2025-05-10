@@ -4,6 +4,7 @@ const {
   addCategory,
   getAllCategories,
   categoryUpload,
+  getTopThreeCategories,
 } = require("../controllers/CategoryController");
 
 // Add category with image
@@ -15,5 +16,6 @@ router.post(
 
 // Get all categories
 router.get("/all-categories", getAllCategories);
+router.get("/top-categories", getTopThreeCategories);
 
 module.exports = router;

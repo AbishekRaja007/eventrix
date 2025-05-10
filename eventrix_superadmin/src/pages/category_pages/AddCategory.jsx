@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import backendGlobalRoute from "../../config/config";
 
@@ -15,6 +15,39 @@ export default function AddCategory() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
 
+  const [categoryTypes, setCategoryTypes] = useState([]);
+  const [categoryTypeInput, setCategoryTypeInput] = useState("");
+
+  const [categories, setCategories] = useState([]); // State to store existing categories
+
+  // Fetch all categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(`${backendGlobalRoute}/api/all-categories`);
+        setCategories(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleCategoryTypeKeyDown = (e) => {
+    if ((e.key === "Enter" || e.key === ",") && categoryTypeInput.trim()) {
+      e.preventDefault();
+      const newType = categoryTypeInput.trim();
+      if (!categoryTypes.includes(newType)) {
+        setCategoryTypes([...categoryTypes, newType]);
+      }
+      setCategoryTypeInput("");
+    }
+  };
+
+  const removeCategoryType = (indexToRemove) => {
+    setCategoryTypes(categoryTypes.filter((_, index) => index !== indexToRemove));
+  };
 
   const handleImageChange = (e) => {
     setCategoryImage(e.target.files[0]);
@@ -83,11 +116,20 @@ export default function AddCategory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    // Check if category name already exists
+    const isDuplicate = categories.some(
+      (cat) => cat.category_name.toLowerCase() === categoryName.toLowerCase()
+    );
+    if (isDuplicate) {
+      alert("Category name already exists. Please choose a different name.");
+      return;
+    }
+
     const filteredCustomProps = customProperties.filter(
       (prop) => prop.name.trim() !== ""
     );
-  
+
     const formData = new FormData();
     formData.append("category_name", categoryName);
     formData.append("description", description);
@@ -98,9 +140,9 @@ export default function AddCategory() {
     formData.append("vendorEnabled", vendorEnabled);
     formData.append("outletEnabled", outletEnabled);
     formData.append("locationEnabled", locationEnabled);
-
     formData.append("tags", JSON.stringify(tags));
-  
+    formData.append("category_types", JSON.stringify(categoryTypes));
+
     try {
       const response = await axios.post(
         `${backendGlobalRoute}/api/add-category`,
@@ -109,10 +151,10 @@ export default function AddCategory() {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-  
+
       alert("Category added successfully!");
       setMessage("Category added successfully!");
-  
+
       // Reset form fields
       setCategoryName("");
       setDescription("");
@@ -122,10 +164,9 @@ export default function AddCategory() {
       setOutletEnabled(false);
       setTags([]);
       setTagInput("");
-  
+
       // Reset the file input field visually
       document.getElementById("categoryImage").value = "";
-  
     } catch (error) {
       console.error("Error adding category:", error.response?.data || error);
       setMessage("Error adding category. Please try again.");
@@ -207,6 +248,36 @@ export default function AddCategory() {
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={handleTagKeyDown}
             placeholder="Enter a tag and press Enter"
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+
+        {/* Category Types */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Category Types</label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {categoryTypes.map((type, index) => (
+              <span
+                key={index}
+                className="flex items-center bg-green-100 text-green-700 px-2 py-1 rounded-full"
+              >
+                {type}
+                <button
+                  type="button"
+                  onClick={() => removeCategoryType(index)}
+                  className="ml-1 text-red-500 font-bold"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <input
+            type="text"
+            value={categoryTypeInput}
+            onChange={(e) => setCategoryTypeInput(e.target.value)}
+            onKeyDown={handleCategoryTypeKeyDown}
+            placeholder="Enter a type and press Enter"
             className="w-full px-3 py-2 border rounded"
           />
         </div>
