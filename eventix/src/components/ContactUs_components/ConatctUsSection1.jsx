@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import abc from "../../assets/images/abcd.jpg";
 
-const AboutUsHero = () => {
+const AboutUsHero = ({ scrollToSection5 }) => {
+    const endOfPageRef = useRef(null);
+
+    const scrollToEnd = () => {
+        endOfPageRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
     return (
         <section className="relative w-full h-screen flex items-center justify-start bg-[#F9F6F2] px-10 lg:px-32">
             <div className="max-w-lg z-10">
@@ -14,8 +20,12 @@ const AboutUsHero = () => {
                     bearing saying seasons isn't image. Face. Of and dominion gathering appear
                     set bring. Lights Sixth isn’t place.
                 </p>
-                <button className="mt-6 px-8 py-3 bg-[#3D3144] text-white font-semibold 
-                rounded-tl-[30px] rounded-br-[30px] shadow-md w-[50%] hover:bg-[#2B1E2D]">CONTACT US
+                <button
+                    className="mt-6 px-8 py-3 bg-[#3D3144] text-white font-semibold 
+                    rounded-tl-[30px] rounded-br-[30px] shadow-md w-[50%] hover:bg-[#2B1E2D]"
+                    onClick={scrollToSection5}
+                >
+                    CONTACT US
                 </button>
                 <div className="flex space-x-4 mt-6">
                     <a href="#" className="text-gray-600 text-2xl">&#xf09a;</a>
@@ -32,6 +42,7 @@ const AboutUsHero = () => {
                     />
                 </div>
             </div>
+            <div ref={endOfPageRef} className="h-0"></div>
         </section>
     );
 };

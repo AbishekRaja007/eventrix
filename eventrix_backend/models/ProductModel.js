@@ -22,6 +22,8 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 
+  category_type: { type: String }, // New field for category type
+
   outlets: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -47,11 +49,9 @@ const productSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ["Point"],
-      required: true,
     },
     coordinates: {
       type: [Number], // Array of [longitude, latitude]
-      required: true,
     },
     address: { type: String }, // Optional address field
   },

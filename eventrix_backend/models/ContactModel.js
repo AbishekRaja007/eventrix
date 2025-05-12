@@ -28,9 +28,7 @@ const ContactMessageSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    lastName: {
-      type: String,
-    },
+    // lastName field removed
     email: {
       type: String,
       required: true,

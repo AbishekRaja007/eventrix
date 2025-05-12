@@ -60,21 +60,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = (token, role = null) => {
+  const login = (token, user) => {
+    setAuthToken(token);
+    setUser(user);
     localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
     window.dispatchEvent(new Event("storage")); // ✅ Force header update
 
     try {
       const decoded = jwtDecode(token);
       setUser(decoded);
       setIsLoggedIn(true);
-
-      if (role) {
-        setAuthToken(token);
-        setUserRole(role);
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("userRole", role);
-      }
     } catch (error) {
       console.error("Invalid token on login:", error);
     }

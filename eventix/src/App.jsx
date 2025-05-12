@@ -10,7 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "./components/common_components/AuthContext";
 import PrivateRoutes from "./components/auth_components/PrivateRoutes";
-
 import Homepage from "./pages/common_pages/Homepage";
 // import Header from "./components/header_components/Header";
 // import Footer from "./components/footer_components/Footer";
@@ -36,6 +35,7 @@ import Review from "./pages/user_pages/Review";
 import Services from "./pages/service_pages/ServicePage";
 import CategoryProducts from "./pages/service_pages/CategoryProducts";
 import SingleProduct from "./pages/service_pages/SingleProduct";
+import Sampel from "./pages/service_pages/Sampel"
 
 
 
@@ -98,6 +98,9 @@ function App() {
           <Route path="/category/:categoryId" element={<CategoryProducts />} />
           <Route path="/product/:productId" element={<SingleProduct />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/sampel" element={<Sampel />} />
+          
+       
           
 
           
@@ -114,9 +117,7 @@ function App() {
           <Route
             path="/user-dashboard/:id"
             element={
-              <PrivateRoutes>
-                <UserDashboard />
-              </PrivateRoutes>
+              <UserDashboard /> // Temporarily remove PrivateRoutes for testing
             }
           />
 

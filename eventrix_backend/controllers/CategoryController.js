@@ -34,7 +34,8 @@ const addCategory = async (req, res) => {
       properties,
       tags,
       locationEnabled,
-      location // this comes as an object: { address, latitude, longitude }
+      location, // this comes as an object: { address, latitude, longitude }
+      category_types, // New field
     } = req.body;
 
     // Check if category already exists
@@ -78,6 +79,18 @@ const addCategory = async (req, res) => {
       };
     }
 
+    // Parse category types
+    const parsedCategoryTypes = category_types
+      ? typeof category_types === "string"
+        ? JSON.parse(category_types)
+        : category_types
+      : [];
+
+    // Ensure `parsedCategoryTypes` is an array
+    if (!Array.isArray(parsedCategoryTypes)) {
+      return res.status(400).json({ error: "Invalid category_types format" });
+    }
+
     const newCategory = new Category({
       category_name,
       description,
@@ -88,6 +101,7 @@ const addCategory = async (req, res) => {
       tags: parsedTags,
       locationEnabled: locationEnabled === "true" || locationEnabled === true,
       location: parsedLocation,
+      category_types: parsedCategoryTypes, // Save category types
     });
 
     await newCategory.save();
@@ -97,7 +111,7 @@ const addCategory = async (req, res) => {
       category: newCategory,
     });
   } catch (error) {
-    console.error("Error adding category:", error);
+    console.error("Error adding category:", error); // Log the exact error
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -113,8 +127,25 @@ const getAllCategories = async (req, res) => {
   }
 };
 
+// Controller to fetch top 3 categories (e.g., for homepage)
+const getTopThreeCategories = async (req, res) => {
+  try {
+    const sortOrder = req.query.sort === "asc" ? 1 : -1; // Determine sort order based on query parameter
+    const categories = await Category.find()
+      .sort({ createdAt: sortOrder }) // Sort by creation date
+      .limit(3)
+      .populate("products");
+
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error("Error fetching top 3 categories:", error);
+    res.status(500).json({ message: "Error fetching top categories" });
+  }
+};
+
 module.exports = {
   addCategory,
   getAllCategories,
+  getTopThreeCategories,
   categoryUpload,
 };

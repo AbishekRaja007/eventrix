@@ -12,11 +12,15 @@ const blogRoutes = require("./routes/BlogRoutes");
 const userRoutes = require("./routes/UserRoutes");
 const contactRoutes = require("./routes/ContactRoutes");
 const subscriptionRoutes = require("./routes/SubscriptionRoutes");
-const categoryRoutes = require("./routes/CategoryRoutes");
+const categoryRoutes = require("./routes/CategoryRoutes"); // Ensure this is imported
 const productRoutes = require("./routes/ProductRoutes");
 const vendorRoutes = require("./routes/VendorRoutes");
 const outletRoutes = require("./routes/OutletRoutes");
-const reviewRoutes = require("./routes/ReviewRoutes"); // Added Review API Route
+
+const ReviewRoutes = require("./routes/ReviewRoutes");
+
+
+const sideBarRoutes = require("./routes/SideBarRoute");
 
 dotenv.config();
 const app = express();
@@ -41,11 +45,13 @@ app.use("/api", userRoutes);
 app.use("/api", contactRoutes);
 app.use("/api", blogRoutes);
 app.use("/api", subscriptionRoutes);
-app.use("/api", categoryRoutes);
+app.use("/api", categoryRoutes); // Ensure this route is registered
 app.use("/api", productRoutes);
 app.use("/api", vendorRoutes);
 app.use("/api", outletRoutes);
-app.use("/api", reviewRoutes); // Added Review Routes
+
+app.use("/api", ReviewRoutes);
+app.use("/api", sideBarRoutes);
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");

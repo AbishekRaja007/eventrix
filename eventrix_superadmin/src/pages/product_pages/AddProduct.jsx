@@ -20,6 +20,7 @@ const AddProduct = () => {
   const [address, setAddress] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [categoryType, setCategoryType] = useState(""); // State for category type
 
   // Handle dynamic fields for dropdown properties
   const handleDynamicDropdownChange = (propertyName, value) => {
@@ -80,6 +81,7 @@ const AddProduct = () => {
   const vendorEnabled = selectedCategory?.vendorEnabled;
   const outletEnabled = selectedCategory?.outletEnabled;
   const locationEnabled = selectedCategory?.locationEnabled;
+  const categoryTypes = selectedCategory?.category_types || []; // Fetch category types from selected category
 
   const handleDynamicFieldChange = (e) => {
     setDynamicFields({
@@ -104,16 +106,20 @@ const AddProduct = () => {
     formData.append("selling_price", sellingPrice);
     formData.append("display_price", displayPrice);
     formData.append("category", category);
+    formData.append("category_type", categoryType); // Append category type to form data
 
-    // Combine address, latitude, and longitude into a single location JSON string
-    const location = JSON.stringify({
-      address,
-      coordinates: {
-        lat: parseFloat(latitude),
-        lng: parseFloat(longitude),
-      },
-    });
-    formData.append("location", location);
+    // Combine address, latitude, and longitude into a single location JSON string only if locationEnabled
+    let location = null;
+    if (locationEnabled && (address || latitude || longitude)) {
+      location = JSON.stringify({
+        address,
+        coordinates: {
+          lat: parseFloat(latitude) || null,
+          lng: parseFloat(longitude) || null,
+        },
+      });
+      formData.append("location", location);
+    }
 
     // Vendor and outlet fields only added if enabled and filled
     if (vendorEnabled && vendor) {
@@ -252,6 +258,26 @@ const AddProduct = () => {
             ))}
           </select>
         </div>
+
+        {/* Category Type */}
+        {categoryTypes.length > 0 && (
+          <div>
+            <label className="block font-medium">Category Type</label>
+            <select
+              value={categoryType}
+              onChange={(e) => setCategoryType(e.target.value)}
+              className="w-full border p-2 rounded"
+              required
+            >
+              <option value="">Select category type</option>
+              {categoryTypes.map((type, index) => (
+                <option key={index} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Vendor (if enabled) */}
         {vendorEnabled && (

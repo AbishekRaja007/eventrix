@@ -7,6 +7,7 @@ const Vendor = require("../models/VendorModel"); // Import Vendor model
 const Outlet = require("../models/OutletModel"); // Import Outlet model
 
 // Multer setup
+// Handles image uploads for products
 const productStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = "uploads/product_images";
@@ -43,6 +44,7 @@ const addProduct = async (req, res) => {
       display_price,
       properties,
       location, // New location data
+      category_type, // New field
     } = req.body;
 
     // Validate Category
@@ -75,27 +77,13 @@ const addProduct = async (req, res) => {
     let locationData = null;
     if (location) {
       try {
-        const parsedLocation = JSON.parse(location); // Expect location to be in JSON format
-        if (!parsedLocation.address) {
-          return res.status(400).json({ message: "Address is required in location" });
-        }
-
-        if (
-          parsedLocation.coordinates &&
-          typeof parsedLocation.coordinates.lat === "number" &&
-          typeof parsedLocation.coordinates.lng === "number"
-        ) {
+        const parsedLocation = JSON.parse(location);
+        if (parsedLocation.address || (parsedLocation.coordinates && parsedLocation.coordinates.lat && parsedLocation.coordinates.lng)) {
           locationData = {
             type: "Point",
-            coordinates: [
-              parsedLocation.coordinates.lng, // Longitude first
-              parsedLocation.coordinates.lat, // Latitude second
-            ],
-            address: parsedLocation.address, // Keep address as a separate field
-          };
-        } else {
-          // Fallback: Only store the address if coordinates are missing
-          locationData = {
+            coordinates: parsedLocation.coordinates
+              ? [parsedLocation.coordinates.lng, parsedLocation.coordinates.lat]
+              : undefined,
             address: parsedLocation.address,
           };
         }
@@ -138,6 +126,7 @@ const addProduct = async (req, res) => {
       display_price: parseFloat(display_price),
       properties: validProperties,
       location: locationData, // Save location data
+      category_type, // Save category type
     });
 
     const savedProduct = await newProduct.save();

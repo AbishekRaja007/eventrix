@@ -1,50 +1,69 @@
 import React from "react";
+import image1 from "../../assets/images/homesection.jpg";
+import image2 from "../../assets/images/homesection1.jpg";
+import image3 from "../../assets/images/homesection2.jpg";
 
 const HomeSection4 = () => {
   return (
-    <section className="bg-white py-16 px-6 md:px-20 flex flex-col md:flex-row items-center gap-8">
-      {/* Left Image */}
-      <div className="w-full md:w-1/2">
-        <img
-          src="/path-to-your-image-left.jpg"
-          alt="Left Image"
-          className="w-full rounded-lg shadow-lg"
-        />
-      </div>
-      
-      {/* Text Content */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center text-center md:text-left">
-        <h2 className="text-4xl font-bold text-gray-800">I'M HAILEY JAMES</h2>
-        <p className="text-sm uppercase tracking-widest text-gray-500 mt-2">
-          A PHOTOGRAPHER SPECIALIZING IN THOSE INTIMATE MOMENTS WITH YOUR PARTNER
-        </p>
-        <p className="text-gray-700 mt-4 leading-relaxed">
-          Introduce yourself! Through the lens of our photography website template, 
-          your portfolio blossoms into a garden of mesmerizing visuals, capturing 
-          the essence of the world around us. Your passion for photography finds a 
-          nurturing home here, and your stories find a canvas to unfold.
-        </p>
-        <p className="text-gray-700 mt-4 leading-relaxed">
-          Let the lens capture the extraordinary in the ordinary, the ethereal in 
-          the mundane, and the timeless in the ephemeral. Let your artistry roam 
-          free and your images tell the tales that words cannot express.
-        </p>
-      </div>
-      
-      {/* Right Small Images */}
-      <div className="w-full md:w-auto flex flex-col gap-4">
-        <img
-          src="/path-to-your-image-top-right.jpg"
-          alt="Top Right Image"
-          className="w-32 h-32 rounded-lg shadow-lg object-cover"
-        />
-        <img
-          src="/path-to-your-image-bottom-right.jpg"
-          alt="Bottom Right Image"
-          className="w-32 h-32 rounded-lg shadow-lg object-cover"
-        />
-      </div>
-    </section>
+    <div className="w-full"> {/* Updated to ensure full width */}
+      {/* Heading Section */}
+      <section className=" py-4 px-6 md:px-20 relative">
+        <div className="absolute top-[150px] left-[500px] transform translate-x-4 translate-y-4"> {/* Add positioning classes */}
+          <h2 className="text-5xl font-bold text-gray-800 text-center md:text-left">
+          CELEBRATE LOVE
+          </h2>
+        </div>
+        <div className="absolute top-[200px] left-[700px] transform translate-x-4 translate-y-4"> {/* Add positioning classes */}
+          <h2 className="text-5xl font-bold text-gray-800 text-center md:text-left">
+           YOUR WAY
+          </h2>
+        </div>
+      </section>
+
+      {/* Main Section with Left Image and Text */}
+      <section className="bg-white py-16 px-6 md:pl-52 flex flex-col md:flex-row items-start gap-8 mb-11 w-full">
+        {/* Left Image */}
+        <div className="w-full md:w-[400px] h-[600px]">
+          <img
+            src={image1}
+            alt="Left Image"
+            className="w-full h-full shadow-lg object-cover"
+          />
+        </div>
+
+        {/* Text Content */}
+        <div className="relative">
+          <div className="absolute w-[1000px] top-[200px] left-[0px]"> {/* Add positioning classes */}
+            <div className="w-full md:w-5/12 flex flex-col justify-center text-left">
+              <p className="text-sm uppercase tracking-widest text-gray-500 mt-2">
+              Where Every Detail Tells Your Love Story
+              </p>
+              <p className="text-gray-700 mt-4 leading-relaxed">
+              At Eventrix, we believe every celebration should be as unique as the couple at its heart. Whether you're envisioning a modern city soirée or a timeless countryside ceremony, our platform connects you with curated vendors to bring your vision to life.
+              </p>
+              <p className="text-gray-700 mt-4 leading-relaxed">
+              From first ideas to final touches, Eventrix simplifies the journey. We help you discover venues, designers, and planners who understand your style — making it easy to craft a wedding that feels deeply personal, effortlessly beautiful, and joyfully unforgettable.
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Small Images */}
+        <div className="w-full  md:w-4/12 flex flex-col gap-20">
+          <img
+            src={image3}
+            alt="Top Right Image"
+            className="w-[200px] h-[200px] shadow-lg object-cover ml-[400px]"
+          />
+          <img
+            src={image2}
+            alt="Bottom Right Image"
+            className="w-[250px] h-[250px] shadow-lg object-cover ml-[600px]" // Increased width to 400px
+          />
+        </div>
+      </section>
+    </div>
   );
 };
 
